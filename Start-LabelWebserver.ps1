@@ -2,14 +2,11 @@
 # To end the loop you have to kill the powershell terminal. ctrl-c wont work :/ 
 
 # From https://gist.github.com/jakobii/429dcef1bacacfa1da254a5353bbeac7
-# Modified for IP Monitoring Script
+# Modified for Label Webserver
 
 # Config
 $getconfig = Get-Content -Path '.\config.txt' -Raw
 $config = ConvertFrom-StringData $getconfig
-
-
-Import-
 
 # Http Server
 $http = [System.Net.HttpListener]::new() 
@@ -76,9 +73,9 @@ while ($http.IsListening) {
 
 
 
-    # ROUTE TO EDIT VIA WEB
-    # http://localhost:8080/edit'
-    if ($context.Request.HttpMethod -eq 'GET' -and $context.Request.RawUrl -eq '/edit') {
+    # For LineOperator03
+    # http://localhost:8080/LineOperator03'
+    if ($context.Request.HttpMethod -eq 'GET' -and $context.Request.RawUrl -eq '/LineOperator03') {
 
         # We can log the request to the terminal
         write-host "$($context.Request.UserHostAddress)  =>  $($context.Request.Url)" -f 'mag'

@@ -12,7 +12,8 @@ $config = ConvertFrom-StringData $getconfig
 $http = [System.Net.HttpListener]::new() 
 
 # Hostname and port to listen on
-$WebServerIP = "$config.ListenOn"
+#$WebServerIP = "$config.ListenOn"
+$WebServerIP = 'http://localhost:8080'
 $http.Prefixes.Add("$WebServerIP/")
 
 
@@ -21,7 +22,7 @@ $http.Start()
 
 # Dot source IP Monitoring Script
 cd $PSScriptRoot
-# . ".\Add-EditHTML.ps1"
+. ".\Add-LineOperator03.ps1"
 # . ".\Add-IPMonitoringHTML.ps1"
 # . ".\New-PHDashboard.ps1"
 
@@ -31,7 +32,7 @@ if ($http.IsListening) {
     write-host " HTTP Server Ready!  " -f 'black' -b 'gre'
     write-host "try testing the different route examples: " -f 'y'
     write-host "$($http.Prefixes)" -f 'y'
-    write-host "$($http.Prefixes)edit" -f 'y'
+    write-host "$($http.Prefixes)LineOperator03" -f 'y'
 }
 
 
@@ -79,8 +80,8 @@ while ($http.IsListening) {
 
         # We can log the request to the terminal
         write-host "$($context.Request.UserHostAddress)  =>  $($context.Request.Url)" -f 'mag'
-        Add-EditHTML
-        [string]$html = Get-Content ".\edit.html" -Raw
+        Add-LineOperator03
+        [string]$html = Get-Content ".\LineOperator03.html" -Raw
 
         #resposed to the request
         $buffer = [System.Text.Encoding]::UTF8.GetBytes($html) 
@@ -90,7 +91,7 @@ while ($http.IsListening) {
     }
 
     # ROUTE Send changes
-    if ($context.Request.HttpMethod -eq 'POST' -and $context.Request.RawUrl -eq '/send') {
+    if ($context.Request.HttpMethod -eq 'POST' -and $context.Request.RawUrl -eq '/LineOperator03/GetOrder') {
 
         # decode the form post
         # html form members need 'name' attributes as in the example!
@@ -102,13 +103,30 @@ while ($http.IsListening) {
         
         # $text = "fullname=Fullnavn&message=Besked"
         $splittext = $FormContent -split {$_ -eq "=" -or $_ -eq "&"}
-        $ip = $splittext | Select-Object -Skip 1 -First 1
-        $name = $splittext | Select-Object -Skip 3 -First 1
-        Write-Host "A server with the $ip and name $name has been added"
-        Add-Content -Path ".\servers.txt" -Value "$ip,$name" -Verbose
+        $ordernumber = $splittext | Select-Object -Skip 1 -First 1
+        $printamount = $splittext | Select-Object -Skip 3 -First 1
+        Write-Host "A request for order $ordernumber and print amount $printamount has been added"
+        
+        # temp file clean
+        if (Test-Path -Path ".\DataToPrint\L03\temp\$ordernumber.csv") 
+                {Remove-Item -Path ".\DataToPrint\L03\temp\$ordernumber.csv"
+                Write-Host temp file found found, cleaning up... -f Green}
+                else 
+                {Write-Host temp file not found... -f Green}
+        
+        # add temp file
+        $csv = Import-Csv ".\DataToLabel\$ordernumber.csv"
+        Add-Content -Path ".\DataToPrint\L03\temp\$ordernumber.csv" -Value "numberofprints,name,fromcountry" -Verbose # -Force # `r`n
+        #New-Item -Path ".\DataToLabel\$ordernumber.csv" -Value "numberofprints,name,fromcountry" -Force
+        Add-Content -Path ".\DataToPrint\L03\temp\$ordernumber.csv" -Value "$printamount,$($csv.name),$($csv.fromcountry)" -Verbose # -Force
 
-        Add-EditHTML
-        [string]$html = Get-Content ".\edit.html" -Raw
+        Write-Host "CSV content"
+        Write-Host "$csv"
+        Write-Host "temp file created content"
+        Write-Host (Get-Content .\DataToPrint\L03\temp\$ordernumber.csv)
+        
+        Add-LineOperator03
+        [string]$html = Get-Content ".\LineOperator03.html" -Raw
 
         #resposed to the request
         $buffer = [System.Text.Encoding]::UTF8.GetBytes($html)

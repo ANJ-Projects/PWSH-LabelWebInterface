@@ -1,14 +1,3 @@
-﻿
-
-# https://ej2.syncfusion.com/documentation/listview/how-to/add-and-remove-list-items-from-listview/
-# https://www.w3schools.com/css/css_table_size.asp
-# https://www.w3schools.com/css/tryit.asp?filename=trycss_form_responsive
-
-
-Function Add-LineOperator03 {
-
-### HTML Form
-$form = @"
 <!DOCTYPE html>
 <html>
 <head>
@@ -115,13 +104,7 @@ input[type=submit]:hover {
 </div>
 
 </body>
-</html>
-"@
-
-### List servers in html
-
-$content = @"
-<!DOCTYPE html>
+</html><!DOCTYPE html>
 <html>
 <head>
 <style>
@@ -159,9 +142,11 @@ $content = @"
     <th>Name</th>
     <th>Country</th>
   </tr>
-"@
-
-$htmltable = @"
+  <tr>
+<td>9</td>
+<td></td>
+<td></td>
+  </tr>
 </table>
 
   </div>
@@ -174,33 +159,3 @@ $htmltable = @"
 
 </body>
 </html>
-"@
-
-# Create HTML File
-New-Item -Path ".\LineOperator03.html" -ItemType File -Value $form -Force
-Add-Content -Path ".\LineOperator03.html" -Value $content -Force
-
-# Get Content of order number
-If (Test-Path -Path ".\DataToPrint\L03\temp\$ordernumber.csv") {
-$ordernumbercontent = Get-content ".\DataToPrint\L03\temp\$ordernumber.csv" | ConvertFrom-Csv -Delimiter ','
-}
-Else
-{ 
-Write-Host 'order not found... -f Red'
-# New-Item -ItemType File -Path ".\servers.txt" -Value "numberofprints,name,fromcountry`r`n"
-}
-
-
-foreach ($lines in $ordernumbercontent){
-    Add-Content -Value "  <tr>" -LiteralPath .\LineOperator03.html -Force
-    Add-Content -Value "<td>$($ordernumbercontent.numberofprints)</td>" -LiteralPath .\LineOperator03.html -Force
-    Add-Content -Value "<td>$($ordernumbercontent.name)</td>" -LiteralPath .\LineOperator03.html -Force
-    Add-Content -Value "<td>$($ordernumbercontent.fromcountry)</td>" -LiteralPath .\LineOperator03.html -Force
-    Add-Content -Value "  </tr>" -LiteralPath .\LineOperator03.html -Force    
-}
-
-Add-Content -Value $htmltable -LiteralPath .\LineOperator03.html -Force
-}
-
-#    <form action='/clear' id="ClearServers" method='post'>
-#    <input type='reset' and add onclick='document.forms["ClearServers"].submit();'>

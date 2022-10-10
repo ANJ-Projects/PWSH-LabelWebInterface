@@ -23,8 +23,7 @@ $http.Start()
 # Dot source IP Monitoring Script
 cd $PSScriptRoot
 . ".\Add-LineOperator03.ps1"
-# . ".\Add-IPMonitoringHTML.ps1"
-# . ".\New-PHDashboard.ps1"
+. ".\Add-LineOperator07.ps1"
 
 
 # Log ready message to terminal 
@@ -116,9 +115,9 @@ while ($http.IsListening) {
         
         # add temp file
         $csv = Import-Csv ".\DataToLabel\$ordernumber.csv"
-        Add-Content -Path ".\DataToPrint\L03\temp\$ordernumber.csv" -Value "numberofprints,name,fromcountry" -Verbose # -Force # `r`n
-        #New-Item -Path ".\DataToLabel\$ordernumber.csv" -Value "numberofprints,name,fromcountry" -Force
-        Add-Content -Path ".\DataToPrint\L03\temp\$ordernumber.csv" -Value "$printamount,$($csv.name),$($csv.fromcountry)" -Verbose # -Force
+        Add-Content -Path ".\DataToPrint\L03\temp\$ordernumber.csv" -Value "numberofprints,name,fromcountry" # -Force # `r`n
+        Add-Content -Path ".\DataToPrint\L03\temp\$ordernumber.csv" -Value "$printamount,$($csv.name),$($csv.fromcountry)" # -Force
+        Copy-Item -Path ".\DataToPrint\L03\temp\$ordernumber.csv" -Destination ".\DataToPrint\L03\print-trigger\print.csv" -Force
 
         Write-Host "CSV content"
         Write-Host "$csv"
@@ -136,9 +135,39 @@ while ($http.IsListening) {
     }
 
 
+    # ROUTE Print Label
+    if ($context.Request.HttpMethod -eq 'POST' -and $context.Request.RawUrl -eq '/LineOperator03/Print') {
+
+        # decode the form post
+        # html form members need 'name' attributes as in the example!
+        $FormContent = [System.IO.StreamReader]::new($context.Request.InputStream).ReadToEnd()
+
+        # We can log the request to the terminal
+        write-host "$($context.Request.UserHostAddress)  =>  $($context.Request.Url)" -f 'mag'
+        Write-Host "Print for order $ordernumber.csv sent"
+        
+#        Remove-Item -Path ".\servers.txt" -Force -ErrorAction SilentlyContinue
+        # [string]$html = Get-Content ".\edit.html" -Raw
+        [string]$html = @"
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+        <meta http-equiv="refresh" content="0; url=$WebServerIP/LineOperator03">
+        </head>
+"@
+        Copy-Item -Path ".\DataToPrint\L03\temp\$ordernumber.csv" -Destination ".\DataToPrint\L03\print-trigger\print.csv" -Force
+
+        #resposed to the request
+        $buffer = [System.Text.Encoding]::UTF8.GetBytes($html)
+        $context.Response.ContentLength64 = $buffer.Length
+        $context.Response.OutputStream.Write($buffer, 0, $buffer.Length)
+        $context.Response.OutputStream.Close() 
+    }
+
     
-    # ROUTE Clear list
-    if ($context.Request.HttpMethod -eq 'POST' -and $context.Request.RawUrl -eq '/clear') {
+    
+    # ROUTE Clear Printjobs
+    if ($context.Request.HttpMethod -eq 'POST' -and $context.Request.RawUrl -eq '/LineOperator03/ClearPrintJobs') {
 
         # decode the form post
         # html form members need 'name' attributes as in the example!
@@ -147,18 +176,17 @@ while ($http.IsListening) {
         # We can log the request to the terminal
         write-host "$($context.Request.UserHostAddress)  =>  $($context.Request.Url)" -f 'mag'
         Write-Host "User request clearing of servers in the servers.txt list"
-        
-        Add-EditHTML
-        Remove-Item -Path ".\servers.txt" -Force -ErrorAction SilentlyContinue
+
+#        Remove-Item -Path ".\servers.txt" -Force -ErrorAction SilentlyContinue
         # [string]$html = Get-Content ".\edit.html" -Raw
         [string]$html = @"
         <!DOCTYPE html>
         <html lang="en">
         <head>
-        <meta http-equiv="refresh" content="0; url=$WebServerIP/edit">
+        <meta http-equiv="refresh" content="0; url=$WebServerIP/LineOperator03">
         </head>
 "@
-        
+
         #resposed to the request
         $buffer = [System.Text.Encoding]::UTF8.GetBytes($html)
         $context.Response.ContentLength64 = $buffer.Length

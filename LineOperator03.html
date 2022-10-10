@@ -69,7 +69,7 @@ input[type=submit]:hover {
 </head>
 <body>
 
-<h1>Add a new server</h1>
+<h1>Get order</h1>
 
 <div class="container">
   <form action='/LineOperator03/GetOrder' method='post'>
@@ -134,7 +134,7 @@ input[type=submit]:hover {
 </head>
 <body>
 
-<h1>Servers</h1>
+<h1>Print List</h1>
 
 <table id='customers'>
   <tr>
@@ -143,17 +143,36 @@ input[type=submit]:hover {
     <th>Country</th>
   </tr>
   <tr>
-<td>9</td>
-<td></td>
-<td></td>
+<td>99</td>
+<td>Red Wine</td>
+<td>Croatia</td>
   </tr>
 </table>
 
   </div>
-  <form action='/clear' method='post'>
+  <form action='/LineOperator03/Print' method='post'>
   <br>
   <div class="row">
-  <input type="submit" value="Clear order">
+  <input type="submit" value="Print now">
+  </form>      
+  </div>
+
+</body>
+
+
+
+
+
+
+
+
+</table>
+
+  </div>
+  <form action='/LineOperator03/ClearPrintJobs' method='post'>
+  <br>
+  <div class="row">
+  <input type="submit" value="Clear print jobs">
   </form>      
   </div>
 

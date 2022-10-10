@@ -89,7 +89,7 @@ input[type=submit]:hover {
       <label for="ordernumber">Order Number</label>
     </div>
     <div class="col-75">
-      <input type="text" id="ordernumber" name="ordernumber" placeholder="Enter the ordernumber..">
+      <input type="text" id="ordernumber" name="ordernumber" placeholder="Enter the ordernumber">
     </div>
   </div>
   <div class="row">

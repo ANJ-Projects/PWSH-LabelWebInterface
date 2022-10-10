@@ -5,7 +5,7 @@
 # https://www.w3schools.com/css/tryit.asp?filename=trycss_form_responsive
 
 
-Function Add-LineOperator03 {
+Function Add-LineOperator07 {
 
 ### HTML Form
 $form = @"
@@ -89,7 +89,7 @@ input[type=submit]:hover {
       <label for="ordernumber">Order Number</label>
     </div>
     <div class="col-75">
-      <input type="text" id="ordernumber" name="ordernumber" placeholder="Enter the ordernumber..">
+      <input type="text" id="ordernumber" name="ordernumber" placeholder="Enter the ordernumber">
     </div>
   </div>
   <div class="row">
@@ -156,8 +156,10 @@ $content = @"
 <table id='customers'>
   <tr>
     <th>Print amount</th>
-    <th>Name</th>
-    <th>Country</th>
+    <th>id</th>
+    <th>country</th>
+    <th>car</th>
+    <th>currency</th>
   </tr>
 "@
 
@@ -190,8 +192,8 @@ $htmltable = @"
 "@
 
 # Create HTML File
-New-Item -Path ".\LineOperator03.html" -ItemType File -Value $form -Force
-Add-Content -Path ".\LineOperator03.html" -Value $content -Force
+New-Item -Path ".\LineOperator07.html" -ItemType File -Value $form -Force
+Add-Content -Path ".\LineOperator07.html" -Value $content -Force
 
 # Get Content of order number
 If (Test-Path -Path ".\DataToPrint\L03\temp\$ordernumber.csv") {
@@ -202,16 +204,19 @@ Else
 Write-Host 'order not found... -f Red'
 }
 
+$ordersSQL = Invoke-Sqlcmd -Query "SELECT * FROM [ordre].[dbo].[varer]" -ServerInstance "localhost\SQLEXPRESS" -OutputAs DataRows
+$selectedOrder = $ordersSQL | Where-Object -Property id -EQ '730'
 
 foreach ($lines in $ordernumbercontent){
-    Add-Content -Value "  <tr>" -LiteralPath .\LineOperator03.html -Force
-    Add-Content -Value "<td>$($ordernumbercontent.numberofprints)</td>" -LiteralPath .\LineOperator03.html -Force
-    Add-Content -Value "<td>$($ordernumbercontent.name)</td>" -LiteralPath .\LineOperator03.html -Force
-    Add-Content -Value "<td>$($ordernumbercontent.fromcountry)</td>" -LiteralPath .\LineOperator03.html -Force
-    Add-Content -Value "  </tr>" -LiteralPath .\LineOperator03.html -Force    
+    Add-Content -Value "  <tr>" -LiteralPath .\LineOperator07.html -Force
+    Add-Content -Value "<td>$($selectedOrder.id)</td>" -LiteralPath .\LineOperator07.html -Force
+    Add-Content -Value "<td>$($selectedOrder.country)</td>" -LiteralPath .\LineOperator07.html -Force
+    Add-Content -Value "<td>$($selectedOrder.car)</td>" -LiteralPath .\LineOperator07.html -Force
+    Add-Content -Value "<td>$($selectedOrder.currency)</td>" -LiteralPath .\LineOperator07.html -Force
+    Add-Content -Value "  </tr>" -LiteralPath .\LineOperator07.html -Force    
 }
 
-Add-Content -Value $htmltable -LiteralPath .\LineOperator03.html -Force
+Add-Content -Value $htmltable -LiteralPath .\LineOperator07.html -Force
 }
 
 #    <form action='/clear' id="ClearServers" method='post'>

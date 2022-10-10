@@ -72,6 +72,10 @@ while ($http.IsListening) {
     }
 
 
+    ###
+    # Line Operator 3
+    ###
+
 
     # For LineOperator03
     # http://localhost:8080/LineOperator03'
@@ -122,7 +126,7 @@ while ($http.IsListening) {
         Write-Host "CSV content"
         Write-Host "$csv"
         Write-Host "temp file created content"
-        Write-Host (Get-Content .\DataToPrint\L03\temp\$ordernumber.csv)
+        Write-Host (Get-Content ".\DataToPrint\L03\temp\$ordernumber.csv")
         
         Add-LineOperator03
         [string]$html = Get-Content ".\LineOperator03.html" -Raw
@@ -200,6 +204,131 @@ while ($http.IsListening) {
     ###
     # Line Operator 7
     ###
+
+    # For LineOperator07
+    # http://localhost:8080/LineOperator07'
+    if ($context.Request.HttpMethod -eq 'GET' -and $context.Request.RawUrl -eq '/LineOperator07') {
+
+        # We can log the request to the terminal
+        write-host "$($context.Request.UserHostAddress)  =>  $($context.Request.Url)" -f 'mag'
+        Add-LineOperator07
+        [string]$html = Get-Content ".\LineOperator07.html" -Raw
+
+        #resposed to the request
+        $buffer = [System.Text.Encoding]::UTF8.GetBytes($html) 
+        $context.Response.ContentLength64 = $buffer.Length
+        $context.Response.OutputStream.Write($buffer, 0, $buffer.Length) 
+        $context.Response.OutputStream.Close()
+    }
+
+
+
+    # ROUTE Send changes
+    if ($context.Request.HttpMethod -eq 'POST' -and $context.Request.RawUrl -eq '/LineOperator07/GetOrder') {
+
+        # decode the form post
+        # html form members need 'name' attributes as in the example!
+        $FormContent = [System.IO.StreamReader]::new($context.Request.InputStream).ReadToEnd()
+
+        # We can log the request to the terminal
+        write-host "$($context.Request.UserHostAddress)  =>  $($context.Request.Url)" -f 'mag'
+        Write-Host $FormContent -f 'Green'
+        
+        # $text = "fullname=Fullnavn&message=Besked"
+        $splittext = $FormContent -split {$_ -eq "=" -or $_ -eq "&"}
+        $ordernumber = $splittext | Select-Object -Skip 1 -First 1
+        $printamount = $splittext | Select-Object -Skip 3 -First 1
+        Write-Host "A request for order $ordernumber and print amount $printamount has been added"
+        
+        # temp file clean
+        if (Test-Path -Path ".\DataToPrint\L07\temp\$ordernumber.csv") 
+                {Remove-Item -Path ".\DataToPrint\L07\temp\$ordernumber.csv"
+                Write-Host temp file found found, cleaning up... -f Green}
+                else 
+                {Write-Host temp file not found... -f Green}
+        
+        # add temp file
+        $ordersSQL = Invoke-Sqlcmd -Query "SELECT * FROM [ordre].[dbo].[varer]" -ServerInstance "localhost\SQLEXPRESS" -OutputAs DataRows
+        $selectedOrder = $ordersSQL | Where-Object -Property id -EQ "$ordernumber"
+
+        Add-Content -Path ".\DataToPrint\L07\temp\$ordernumber.csv" -Value "numberofprints,country,car,currency" # -Force # `r`n
+        Add-Content -Path ".\DataToPrint\L07\temp\$ordernumber.csv" -Value "$printamount,$($selectedOrder.country),$($selectedOrder.car),$($selectedOrder.currency)" # -Force
+        Copy-Item -Path ".\DataToPrint\L07\temp\$ordernumber.csv" -Destination ".\DataToPrint\L07\print-trigger\print.csv" -Force
+
+        Write-Host "CSV content"
+        Write-Host "$csv"
+        Write-Host "temp file created content"
+        Write-Host (Get-Content ".\DataToPrint\L07\temp\$ordernumber.csv")
+        
+        Add-LineOperator07
+        [string]$html = Get-Content ".\LineOperator07.html" -Raw
+
+        #resposed to the request
+        $buffer = [System.Text.Encoding]::UTF8.GetBytes($html)
+        $context.Response.ContentLength64 = $buffer.Length
+        $context.Response.OutputStream.Write($buffer, 0, $buffer.Length)
+        $context.Response.OutputStream.Close() 
+    }
+
+
+    # ROUTE Print Label
+    if ($context.Request.HttpMethod -eq 'POST' -and $context.Request.RawUrl -eq '/LineOperator07/Print') {
+
+        # decode the form post
+        # html form members need 'name' attributes as in the example!
+        $FormContent = [System.IO.StreamReader]::new($context.Request.InputStream).ReadToEnd()
+
+        # We can log the request to the terminal
+        write-host "$($context.Request.UserHostAddress)  =>  $($context.Request.Url)" -f 'mag'
+        Write-Host "Print for order $ordernumber.csv sent"
+        
+#        Remove-Item -Path ".\servers.txt" -Force -ErrorAction SilentlyContinue
+        # [string]$html = Get-Content ".\edit.html" -Raw
+        [string]$html = @"
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+        <meta http-equiv="refresh" content="0; url=$WebServerIP/LineOperator07">
+        </head>
+"@
+        Copy-Item -Path ".\DataToPrint\L07\temp\$ordernumber.csv" -Destination ".\DataToPrint\L07\print-trigger\print.csv" -Force
+
+        #resposed to the request
+        $buffer = [System.Text.Encoding]::UTF8.GetBytes($html)
+        $context.Response.ContentLength64 = $buffer.Length
+        $context.Response.OutputStream.Write($buffer, 0, $buffer.Length)
+        $context.Response.OutputStream.Close() 
+    }
+
+    
+    
+    # ROUTE Clear Printjobs
+    if ($context.Request.HttpMethod -eq 'POST' -and $context.Request.RawUrl -eq '/LineOperator07/ClearPrintJobs') {
+
+        # decode the form post
+        # html form members need 'name' attributes as in the example!
+        $FormContent = [System.IO.StreamReader]::new($context.Request.InputStream).ReadToEnd()
+
+        # We can log the request to the terminal
+        write-host "$($context.Request.UserHostAddress)  =>  $($context.Request.Url)" -f 'mag'
+        Write-Host "User request clearing of servers in the servers.txt list"
+
+#        Remove-Item -Path ".\servers.txt" -Force -ErrorAction SilentlyContinue
+        # [string]$html = Get-Content ".\edit.html" -Raw
+        [string]$html = @"
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+        <meta http-equiv="refresh" content="0; url=$WebServerIP/LineOperator07">
+        </head>
+"@
+
+        #resposed to the request
+        $buffer = [System.Text.Encoding]::UTF8.GetBytes($html)
+        $context.Response.ContentLength64 = $buffer.Length
+        $context.Response.OutputStream.Write($buffer, 0, $buffer.Length)
+        $context.Response.OutputStream.Close() 
+    }
 
 
 

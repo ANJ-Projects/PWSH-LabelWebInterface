@@ -57,11 +57,13 @@ Start 'Start-LabelWebServer.ps1
 ```
 # Showcase
 
+CSV Example shown here, it loads data from a folder, the user inputs basically the name of the csv file
 ![](CSV_Example.gif)
+SQL Example here, using sqlcmd it graps the id of the table that has the correct data, pwsh then creates a csv file from that data
 ![](SQL_Example.gif)
 
 ## Credits
-[Jacob Ochoa](https://gist.github.com/jakobii) for giving a great example on how to start a webserver using pwsh
+[Jacob Ochoa](https://gist.github.com/jakobii) for giving a great example on how to start a webserver using pwsh, some of the code has been modified in this project
 https://gist.github.com/jakobii/429dcef1bacacfa1da254a5353bbeac7
 
 [Adam Driscoll](https://github.com/adamdriscoll) for inspiration

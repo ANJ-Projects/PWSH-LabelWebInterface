@@ -205,7 +205,7 @@ Write-Host 'order not found... -f Red'
 
 foreach ($lines in $ordernumbercontent){
     Add-Content -Value "  <tr>" -LiteralPath .\LineOperator07.html -Force
-    Add-Content -Value "<td>$($selectedOrder.id)</td>" -LiteralPath .\LineOperator07.html -Force
+    Add-Content -Value "<td>$($printamount)</td>" -LiteralPath .\LineOperator07.html -Force
     Add-Content -Value "<td>$($selectedOrder.country)</td>" -LiteralPath .\LineOperator07.html -Force
     Add-Content -Value "<td>$($selectedOrder.car)</td>" -LiteralPath .\LineOperator07.html -Force
     Add-Content -Value "<td>$($selectedOrder.currency)</td>" -LiteralPath .\LineOperator07.html -Force

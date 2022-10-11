@@ -4,15 +4,10 @@
 # From https://gist.github.com/jakobii/429dcef1bacacfa1da254a5353bbeac7
 # Modified for Label Webserver
 
-# Config
-$getconfig = Get-Content -Path '.\config.txt' -Raw
-$config = ConvertFrom-StringData $getconfig
-
 # Http Server
 $http = [System.Net.HttpListener]::new() 
 
 # Hostname and port to listen on
-#$WebServerIP = "$config.ListenOn"
 $WebServerIP = 'http://localhost:8080'
 $http.Prefixes.Add("$WebServerIP/")
 

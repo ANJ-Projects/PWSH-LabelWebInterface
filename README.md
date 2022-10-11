@@ -65,6 +65,7 @@ Make sure to read up on security, this method might need to be protected by thin
 CSV Example shown here, it loads data from a folder, the user inputs basically the name of the csv file
 ![](CSV_Example.gif)
 SQL Example here, using sqlcmd it graps the id of the table that has the correct data, pwsh then creates a csv file from that data
+Be noticed, that the gif is outdated, it shows ordernumber instead of print amount. it has been fixed.
 ![](SQL_Example.gif)
 
 ## Credits

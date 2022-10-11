@@ -57,7 +57,8 @@ Start 'Start-LabelWebServer.ps1
 ```
 # Showcase
 
-video here
+![](CSV_Example.gif)
+![](SQL_Example.gif)
 
 ## Credits
 [Jacob Ochoa](https://gist.github.com/jakobii) for giving a great example on how to start a webserver using pwsh

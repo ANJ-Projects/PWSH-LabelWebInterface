@@ -58,3 +58,15 @@ Start 'Start-LabelWebServer.ps1
 # Showcase
 
 video here
+
+## Credits
+[Jacob Ochoa](https://gist.github.com/jakobii) for giving a great example on how to start a webserver using pwsh
+https://gist.github.com/jakobii/429dcef1bacacfa1da254a5353bbeac7
+
+[Adam Driscoll](https://github.com/adamdriscoll) for inspiration
+
+W3Schools for all the amazing HTML examples
+
+Reddit, spiceworks and other places where amazing people that share their work, suggestions and examples 
+
+

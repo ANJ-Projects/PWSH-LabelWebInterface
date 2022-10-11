@@ -45,7 +45,7 @@ Benefits include
 * Label software that support file triggers
 
 # Before you try
-I would recommend you use [Universal Dashboard](https://ironmansoftware.com/powershell-universal) as setting this up is way faster, and probably way more secure and centralised
+I would recommend you use [Universal Dashboard](https://ironmansoftware.com/powershell-universal) as setting something like this project up in UD is way faster, and probably a way more secure and centralised way
 
 If the label software used is paid, please read the license agreements, for some software the license may be based on number of computers and not number of printers or users
 
@@ -54,7 +54,12 @@ If the label software used is paid, please read the license agreements, for some
 cd 'PathTo\MainFolder'
 Start 'Start-LabelWebServer.ps1
 
+# In Start-LabelWebserver.ps1 change the line below to the ip that should be listened on, and remember to open the port on the firewall
+# $WebServerIP = 'http://localhost:8080'
+
 ```
+Make sure to read up on security, this method might need to be protected by things like sign in, firewall rules, IP rules or a reverse proxy server
+
 # Showcase
 
 CSV Example shown here, it loads data from a folder, the user inputs basically the name of the csv file

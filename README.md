@@ -25,6 +25,9 @@ Benefits include
 * Centralised label print management
 * Use print servers, no need to install print drivers on every line operater PC
 * Extra redundancy, in case a PC goes down, employee's can print from any web enabled device
+* Easy customizeable, the company may have add ons or tracking, integrating should probably be easier from a centralised server rather than installing on every PC
+* A langauge IT workers understand, No need to use software from the early 2000's that takes hours to setup
+* Uses dot net, powershell, html
 
 # Requirements
 

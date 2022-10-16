@@ -12,7 +12,7 @@ $http = [System.Net.HttpListener]::new()
  $http.Prefixes.Add("$WebServerIP/")
 
 # To connect from other PC use IP, and run elevated
-# $WebServerIP = 'http://192.168.2.208:8082'
+# $WebServerIP = 'http://192.168.2.208:8080'
 #$http.Prefixes.Add("$WebServerIP/")
 
 # Start the Http Server 

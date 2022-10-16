@@ -1,0 +1,5 @@
+Create a database named ordre
+Create a table in that database named varer
+Put content into that table so it's like this
+
+id,country,car,currency

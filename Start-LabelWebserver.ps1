@@ -8,9 +8,12 @@
 $http = [System.Net.HttpListener]::new() 
 
 # Hostname and port to listen on
-$WebServerIP = 'http://localhost:8080'
-$http.Prefixes.Add("$WebServerIP/")
+ $WebServerIP = 'http://localhost:8080'
+ $http.Prefixes.Add("$WebServerIP/")
 
+# To connect from other PC use IP, and run elevated
+# $WebServerIP = 'http://192.168.2.208:8082'
+#$http.Prefixes.Add("$WebServerIP/")
 
 # Start the Http Server 
 $http.Start()
@@ -27,6 +30,8 @@ if ($http.IsListening) {
     write-host "try testing the different route examples: " -f 'y'
     write-host "$($http.Prefixes)" -f 'y'
     write-host "$($http.Prefixes)LineOperator03" -f 'y'
+    write-host "$($http.Prefixes)LineOperator07" -f 'y'
+    write-host "$($http.Prefixes)UPDATE-[InsertValue]" -f 'y'
 }
 
 
@@ -326,7 +331,52 @@ while ($http.IsListening) {
     }
 
 
+    # For LineOperator07 change currency
+    # http://localhost:8080/LineOperator03'
+    if ($context.Request.HttpMethod -eq 'GET' -and $context.Request.RawUrl -like "/UPDATE-*") {
 
+        # We can log the request to the terminal
+        write-host "$($context.Request.UserHostAddress)  =>  $($context.Request.Url)" -f 'mag'
+
+        Try {
+        $updateREGIOnPickedOrder = $($context.Request.Url) -split "$WebServerIP/UPDATE-" | select -skip 1
+        Write-Host "Picked order is $updateREGIOnPickedOrder and get url is $($context.Request.Url)" }
+        catch
+        {Write-Host "There is an error but this seems to work"}
+
+<#
+        $updateREGION = @"
+        USE ordre
+        UPDATE varer
+        SET currency = "$updateREGIOnPickedOrder"
+        WHERE varer.id = 1002;
+"@
+#>
+
+# Update
+$updateREGION = @"
+USE ordre
+UPDATE varer
+SET country = 'FR'
+WHERE varer.id = $updateREGIOnPickedOrder;
+"@
+
+Write-Host $updateREGION
+
+        $ordersSQL = Invoke-Sqlcmd -Query $updateREGION -ServerInstance "localhost\SQLEXPRESS"
+        
+        [string]$html = "
+        <!DOCTYPE html>
+        <title>Updated</title>
+        <h1>A Powershell Webserver</h1><p>home page</p>"
+
+
+        #resposed to the request
+        $buffer = [System.Text.Encoding]::UTF8.GetBytes($html) 
+        $context.Response.ContentLength64 = $buffer.Length
+        $context.Response.OutputStream.Write($buffer, 0, $buffer.Length) 
+        $context.Response.OutputStream.Close()
+    }
 
 
 
